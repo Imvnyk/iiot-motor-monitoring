@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <WiFi.h>
 #include <DHT.h>
 #include <Wire.h>
 #include <Adafruit_MPU6050.h>
@@ -11,6 +12,26 @@
 DHT dht(DHT_PIN, DHT_TYPE);
 Adafruit_MPU6050 mpu;
 
+const char* ssid = "Wokwi-GUEST";
+const char* password = "";
+
+void connectWiFi() {
+  Serial.print("Connecting to WiFi");
+
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println();
+  Serial.println("WiFi connected!");
+
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+}
+
 void setup() {
   Serial.begin(115200);
 
@@ -18,52 +39,61 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);
 
   if (!mpu.begin()) {
-    Serial.println("MPU6050 not found!");
+    Serial.println("ERROR: MPU6050 not found!");
+
     while (1) {
       delay(10);
     }
   }
 
+  connectWiFi();
+
   Serial.println("IIoT motor monitoring started");
 }
 
 void loop() {
-  // Read temperature
+  // 1. Read temperature
   float temperature = dht.readTemperature();
 
-  // Read MPU6050 acceleration
+  // 2. Read MPU6050
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
 
-  // Calculate acceleration magnitude
+  float accelX = a.acceleration.x;
+  float accelY = a.acceleration.y;
+  float accelZ = a.acceleration.z;
+
+  // 3. Calculate simple vibration value
   float accelerationMagnitude = sqrt(
-    a.acceleration.x * a.acceleration.x +
-    a.acceleration.y * a.acceleration.y +
-    a.acceleration.z * a.acceleration.z
+    accelX * accelX +
+    accelY * accelY +
+    accelZ * accelZ
   );
 
-  // Simple vibration indicator
   float vibration = abs(accelerationMagnitude - 9.81);
 
-  // Display values
+  // 4. Display data
+  Serial.println();
+  Serial.println("----- MOTOR DATA -----");
+
   Serial.print("Temperature: ");
   Serial.print(temperature);
   Serial.println(" C");
 
-  Serial.print("Accel X: ");
-  Serial.println(a.acceleration.x);
+  Serial.print("Acceleration X: ");
+  Serial.println(accelX);
 
-  Serial.print("Accel Y: ");
-  Serial.println(a.acceleration.y);
+  Serial.print("Acceleration Y: ");
+  Serial.println(accelY);
 
-  Serial.print("Accel Z: ");
-  Serial.println(a.acceleration.z);
+  Serial.print("Acceleration Z: ");
+  Serial.println(accelZ);
 
   Serial.print("Vibration: ");
   Serial.print(vibration);
   Serial.println(" m/s2");
 
-  // Alert conditions
+  // 5. Alert conditions
   bool highTemperature = temperature >= 40;
   bool highVibration = vibration >= 4;
 
@@ -79,9 +109,9 @@ void loop() {
     if (highVibration) {
       Serial.println("Reason: High vibration");
     }
-
   } else {
     digitalWrite(LED_PIN, LOW);
+
     Serial.println("STATUS: NORMAL");
   }
 
