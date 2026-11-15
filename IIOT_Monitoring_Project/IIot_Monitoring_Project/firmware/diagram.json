@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "author": "Iman Yakhou",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 4.84, "attrs": {} },
+    { "type": "wokwi-dht22", "id": "dht1", "top": -172.5, "left": -15, "attrs": { "temperature": "23.2", "humidity": "35" } },
+    { "type": "wokwi-led", "id": "led1", "top": 111.6, "left": 263, "attrs": { "color": "red" } },
+    { "type": "wokwi-resistor", "id": "r1", "top": 157.55, "left": 182.4, "attrs": { "value": "1000" } },
+    { "type": "wokwi-mpu6050", "id": "imu1", "top": 109.42, "left": -189.68, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:3V3", "dht1:VCC", "red", [ "h0" ] ],
+    [ "dht1:GND", "esp:GND.2", "black", [ "h76.8", "v86.4" ] ],
+    [ "dht1:SDA", "esp:15", "green", [ "v28.8", "h124.9", "v201.6" ] ],
+    [ "led1:A", "r1:2", "green", [ "v0" ] ],
+    [ "esp:2", "r1:1", "green", [ "h0" ] ],
+    [ "esp:GND.3", "led1:C", "black", [ "h144", "v67.2" ] ],
+    [ "imu1:VCC", "esp:3V3", "red", [ "v0" ] ],
+    [ "imu1:GND", "esp:GND.1", "black", [ "v-28.8", "h19.28", "v67.2" ] ],
+    [ "imu1:SDA", "esp:21", "green", [ "v0" ] ],
+    [ "imu1:SCL", "esp:22", "green", [ "v0" ] ]
+  ],
+  "dependencies": {}
+}
