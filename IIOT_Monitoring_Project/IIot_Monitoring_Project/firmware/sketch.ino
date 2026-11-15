@@ -13,12 +13,12 @@ const char* WIFI_SSID = "Wokwi-GUEST";
 const char* WIFI_PASSWORD = "";
 
 // ===== EMQX CLOUD =====
-const char* MQTT_SERVER = "ud1f8330.ala.us-east-1.emqxsl.com";
+const char* MQTT_SERVER = "youremqxhost";
 const int MQTT_PORT = 8883;
 
-const char* MQTT_USERNAME = "iotuser";
-const char* MQTT_PASSWORD = "imanhafsa123@"; // Enter privately
-const char* MQTT_CLIENT_ID = "HafsaIman-Motor-ESP32";
+const char* MQTT_USERNAME = "your username";
+const char* MQTT_PASSWORD = "your password"; 
+const char* MQTT_CLIENT_ID = "clientid";
 
 // ===== CA CERTIFICATE =====
 static const char MQTT_CA[] = R"EOF(
