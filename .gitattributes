@@ -1,0 +1,2 @@
+*.py linguist-language=Python
+*.ino linguist-language=C++
